@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import useSWR from 'swr'
 import axios from 'axios'
 import { debounce } from 'lodash'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
+import Image from 'next/image'
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data.movies)
 
@@ -50,7 +52,7 @@ const MovieSearch = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-2xl font-bold">Movie Search</h1>
+      <h1 className="mb-4 text-2xl font-bold">Movies</h1>
       <form className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -75,26 +77,31 @@ const MovieSearch = () => {
         <h2 className="mb-2 text-xl font-semibold">Movie Results</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {movies.map((movie: any) => (
-            <Card key={movie.id}>
-              <img
+            <Card key={movie.id} className="rounded-none p-0">
+              <Image
                 src={movie.photoUrl}
                 alt={movie.title}
-                className="mb-4 h-48 w-full rounded object-cover"
+                width={200}
+                height={400}
+                className="mb-4 h-full max-h-[400px] min-h-96 w-full object-cover"
               />
-              <h3 className="text-lg font-bold">{movie.title}</h3>
-              <p>{movie.description}</p>
-              <p>Genre: {movie.genre.name}</p>
-              <p>Director: {movie.director.name}</p>
-              <p>
-                Release Date: {new Date(movie.releaseDate).toLocaleDateString()}
-              </p>
-              <div>
-                <h4 className="font-semibold">Actors:</h4>
-                <ul>
-                  {movie.actors.map((actor: any) => (
-                    <li key={actor.id}>{actor.name}</li>
-                  ))}
-                </ul>
+              <div className="px-4 py-2">
+                <h3 className="text-lg font-bold">{movie.title}</h3>
+                <p>{movie.description}</p>
+                <p>Genre: {movie.genre.name}</p>
+                <p>Director: {movie.director.name}</p>
+                <p>
+                  Release Date:{' '}
+                  {new Date(movie.releaseDate).toLocaleDateString()}
+                </p>
+                <div>
+                  <h4 className="font-semibold">Actors:</h4>
+                  <ul>
+                    {movie.actors.map((actor: any) => (
+                      <li key={actor.id}>{actor.name}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </Card>
           ))}
