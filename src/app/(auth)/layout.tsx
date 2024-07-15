@@ -1,11 +1,13 @@
-import './globals.css'
+import '../globals.css'
 import type { Metadata } from 'next'
-import { Inter as FontSans } from 'next/font/google'
+import { Roboto as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
+import { Toaster } from '@/components/ui/sonner'
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
+  weight: '400',
 })
 
 export const metadata: Metadata = {
@@ -19,14 +21,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-br" suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased',
+          'flex min-h-screen flex-col bg-foreground font-sans text-background antialiased',
           fontSans.variable,
         )}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   )
