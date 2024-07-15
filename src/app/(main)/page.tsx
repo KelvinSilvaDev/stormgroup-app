@@ -31,7 +31,7 @@ export default function HomePage() {
     const fetchMovies = async () => {
       try {
         setIsLoading(true)
-        const apiUrl = process.env.NEXT_ENV_API_URL || 'http://localhost:3000'
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL
         const url = new URL(apiUrl + '/movies')
 
         url.searchParams.append('page', currentPage.toString())
