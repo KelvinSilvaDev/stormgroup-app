@@ -13,6 +13,10 @@ module.exports = {
         protocol: 'https',
         hostname: 'br.web.img3.acsta.net',
       },
+      {
+        protocol: 'https',
+        hostname: '*',
+      },
     ],
   },
-}
+};

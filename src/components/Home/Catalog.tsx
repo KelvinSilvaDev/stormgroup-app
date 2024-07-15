@@ -10,8 +10,7 @@ interface CatalogProps {
 
 export function Catalog({ movies, isLoading }: CatalogProps) {
   return (
-    <main className="container">
-      <h1 className="my-9 text-2xl font-bold">Confira nossos filmes</h1>
+    <main className="container mb-4">
       <Suspense fallback={<h1>Loading</h1>}>
         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {movies.map((movie) => (
