@@ -1,25 +1,26 @@
 'use client'
-
-import React from 'react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+// components/ui/add-movie-form.tsx
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormControl,
   FormMessage,
-} from '@/components/ui/form'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import api from '@/service/api'
+} from '../ui/form'
 
-const movieSchema = z.object({
-  title: z.string().min(1, { message: 'Title is required' }),
-  description: z.string().min(1, { message: 'Description is required' }),
+import { useState } from 'react'
+import api from '@/service/api'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { toast } from 'sonner'
+
+const addMovieSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
   releaseDate: z
     .string()
     .min(1, { message: 'Release Date is required' })
@@ -30,41 +31,51 @@ const movieSchema = z.object({
       }
       return date.toISOString() // Converte para o formato ISO-8601
     }),
-
-  directorName: z.string().min(1, { message: 'Director ID is required' }),
-  genreName: z.string().min(1, { message: 'Genre ID is required' }),
+  directorName: z.string().min(1, 'Director Name is required'),
+  genreName: z.string().min(1, 'Genre Name is required'),
   photoUrl: z.string().url({ message: 'Photo URL must be a valid URL' }),
+  isActive: z.boolean(),
 })
 
-type MovieSchema = z.infer<typeof movieSchema>
+type AddMovieSchema = z.infer<typeof addMovieSchema>
 
-const AddMovieForm = () => {
-  const form = useForm<MovieSchema>({
-    resolver: zodResolver(movieSchema),
+export const AddMovieForm = () => {
+  const form = useForm<AddMovieSchema>({
+    resolver: zodResolver(addMovieSchema),
+    defaultValues: {
+      isActive: true,
+    },
   })
 
-  const handleSubmit: SubmitHandler<MovieSchema> = async (data) => {
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const onSubmit = async (data: AddMovieSchema) => {
     try {
       const response = await api.post('/movies', data)
-      console.log('Movie added:', response.data)
-    } catch (error) {
-      console.error('Error adding movie:', error)
+      if (response) {
+        toast.success('FOI')
+      }
+      setMessage('Filme adicionado com sucesso!')
+      setError(null)
+    } catch (err) {
+      setError('Erro ao adicionar filme')
+      setMessage(null)
     }
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-2xl font-bold">Add New Movie</h1>
+    <div className="mx-auto max-w-4xl p-4">
+      <h1 className="mb-4 text-2xl font-bold">Adicionar Novo Filme</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             name="title"
-            control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Título</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Título" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -72,12 +83,11 @@ const AddMovieForm = () => {
           />
           <FormField
             name="description"
-            control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Descrição</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Input placeholder="Descrição" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,10 +95,9 @@ const AddMovieForm = () => {
           />
           <FormField
             name="releaseDate"
-            control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Release Date</FormLabel>
+                <FormLabel>Data de Lançamento</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -98,12 +107,11 @@ const AddMovieForm = () => {
           />
           <FormField
             name="directorName"
-            control={form.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Diretor</FormLabel>
                 <FormControl>
-                  <Input type="string" {...field} />
+                  <Input placeholder="Diretor" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -111,12 +119,11 @@ const AddMovieForm = () => {
           />
           <FormField
             name="genreName"
-            control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Genero</FormLabel>
+                <FormLabel>Gênero</FormLabel>
                 <FormControl>
-                  <Input type="string" {...field} />
+                  <Input placeholder="Gênero" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,11 +142,13 @@ const AddMovieForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Add Movie</Button>
+          <Button type="submit" className="mt-4 w-full">
+            Adicionar Filme
+          </Button>
         </form>
       </Form>
+      {message && <p className="mt-2 text-green-600">{message}</p>}
+      {error && <p className="mt-2 text-red-600">{error}</p>}
     </div>
   )
 }
-
-export default AddMovieForm

@@ -2,7 +2,9 @@ import '../globals.css'
 import type { Metadata } from 'next'
 import { Roboto as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
-import { Navbar } from '@/components/Navbar'
+import { Navbar } from '@/components/ui/navbar'
+import { AuthProvider } from '@/lib/auth-context'
+// import { Navbar } from '@/components/Navbar'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -28,8 +30,10 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

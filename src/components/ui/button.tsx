@@ -26,10 +26,14 @@ const buttonVariants = cva(
         lg: 'h-10 rounded-md px-8',
         icon: 'h-9 w-9',
       },
+      iconLeft: {
+        default: 'flex',
+      },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
+      iconLeft: 'default',
     },
   },
 )

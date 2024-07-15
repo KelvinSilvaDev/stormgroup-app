@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = axios.create({
   // baseURL: "http://localhost:3333",
-  baseURL: process.env.NEXT_ENV_API_URL || 'https://formgroup-api.onrender.com',
+  baseURL: process.env.NEXT_ENV_API_URL || 'http://localhost:3000',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken')
+    const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

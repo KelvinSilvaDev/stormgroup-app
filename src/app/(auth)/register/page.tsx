@@ -1,5 +1,11 @@
 'use client'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import {
   FormField,
   FormItem,
@@ -8,41 +14,38 @@ import {
   FormMessage,
   Form,
 } from '@/components/ui/form'
-
-import { toast } from 'sonner'
-
-import { Input } from '@/components/ui/input'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { login } from '@/service/auth'
+import { login, register } from '@/service/auth'
 
-const loginSchema = z.object({
+const registerSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters long'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
 })
 
-type LoginSchema = z.infer<typeof loginSchema>
+type RegisterSchema = z.infer<typeof registerSchema>
 
-export default function Login() {
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+export default function Register() {
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
     },
   })
-
   const router = useRouter()
-
-  const onSubmit = async (data: LoginSchema) => {
+  const handleSubmit = async (data: RegisterSchema) => {
+    console.log(data)
     try {
-      const res = await login(data)
+      const res = await register(data)
 
       if (res) {
-        toast('Login bem-sucedido.')
-        router.push('/')
+        toast('Usuário cadastrado.')
+        const auth = await login({ email: data.email, password: data.password })
+        if (auth.access_token) {
+          router.push('/')
+        }
       } else {
         toast.error('Credenciais erradas.')
       }
@@ -55,15 +58,26 @@ export default function Login() {
         },
       })
     }
-    // Handle login logic
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md rounded p-8 shadow-md">
-        <h2 className="mb-8 text-center text-2xl font-bold">Login</h2>
+        <h2 className="mb-8 text-center text-2xl font-bold">Register</h2>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <FormField
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               name="email"
               render={({ field }) => (
@@ -89,7 +103,7 @@ export default function Login() {
               )}
             />
             <Button type="submit" className="mt-4 w-full">
-              Login
+              Register
             </Button>
           </form>
         </Form>
