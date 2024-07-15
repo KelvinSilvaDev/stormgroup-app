@@ -13,10 +13,14 @@ export function Catalog({ movies }: CatalogProps) {
   return (
     <main className="container my-4">
       <Suspense fallback={<h1>Loading</h1>}>
-        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="flex flex-col gap-4 sm:grid-cols-1 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {movies.map((movie) => (
-            <Link key={movie.id} href={`movies/${movie.id}`}>
-              <Card className="border-none">
+            <Link
+              key={movie.id}
+              href={`movies/${movie.id}`}
+              className="w-full max-w-full"
+            >
+              <Card className="w-full border-none">
                 <div className="relative h-60 w-full shadow">
                   <Image
                     src={
